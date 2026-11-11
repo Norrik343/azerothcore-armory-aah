@@ -364,9 +364,9 @@ export class CharacterController {
 	}
 
 	private async getEquipmentData(realm: string, charGuid: number): Promise<IEquipmentData[]> {
-		const transmogSelect = this.armory.config.transmogModule ? ", custom_transmogrification.FakeEntry AS transmog" : "";
+		const transmogSelect = this.armory.config.transmogModule ? ", CASE WHEN mod_transmog_plus.FakeEntry = 999999 THEN 1 ELSE mod_transmog_plus.FakeEntry END AS transmog" : "";
 		const transmogJoin = this.armory.config.transmogModule
-			? "LEFT JOIN custom_transmogrification ON custom_transmogrification.GUID = item_instance.guid"
+			? "LEFT JOIN mod_transmog_plus ON mod_transmog_plus.Owner = character_inventory.guid AND mod_transmog_plus.Slot = character_inventory.slot"
 			: "";
 		let [rows] = await this.armory.getCharactersDb(realm).query({
 			sql: `
